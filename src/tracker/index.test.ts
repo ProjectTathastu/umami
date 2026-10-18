@@ -1,16 +1,9 @@
 import { afterEach, expect, test, vi } from 'vitest';
 
-const localStorageDescriptor = Object.getOwnPropertyDescriptor(window, 'localStorage');
-
 afterEach(() => {
   delete (window as Window & { umami?: unknown }).umami;
   delete (document as Document & { currentScript?: HTMLScriptElement }).currentScript;
   delete (document as Document & { readyState?: DocumentReadyState }).readyState;
-  if (localStorageDescriptor) {
-    Object.defineProperty(window, 'localStorage', localStorageDescriptor);
-  } else {
-    delete (window as Window & { localStorage?: Storage }).localStorage;
-  }
   vi.unstubAllGlobals();
   vi.resetModules();
 });
@@ -27,16 +20,8 @@ const setCurrentScript = (distinctId?: string) => {
   });
 };
 
-const setLocalStorage = (getItem: Storage['getItem']) => {
-  Object.defineProperty(window, 'localStorage', {
-    configurable: true,
-    value: { getItem } as Storage,
-  });
-};
-
 test('identifies data-distinct-id before the initial page view', async () => {
   setCurrentScript('visitor-id');
-  setLocalStorage(vi.fn().mockReturnValue(null));
 
   const fetchMock = vi.fn().mockResolvedValue({ json: vi.fn().mockResolvedValue({}) });
   vi.stubGlobal('fetch', fetchMock);
@@ -58,8 +43,7 @@ test('identifies data-distinct-id before the initial page view', async () => {
 
 test('does not track when localStorage disables tracking', async () => {
   setCurrentScript();
-  const getItem = vi.fn().mockReturnValue('1');
-  setLocalStorage(getItem);
+  const getItem = vi.spyOn(window.localStorage, 'getItem').mockReturnValue('1');
 
   const fetchMock = vi.fn();
   vi.stubGlobal('fetch', fetchMock);
@@ -72,6 +56,7 @@ test('does not track when localStorage disables tracking', async () => {
 
 test('continues tracking when localStorage is unavailable', async () => {
   setCurrentScript('visitor-id');
+  const localStorageDescriptor = Object.getOwnPropertyDescriptor(window, 'localStorage');
   Object.defineProperty(window, 'localStorage', {
     configurable: true,
     get() {
@@ -82,7 +67,15 @@ test('continues tracking when localStorage is unavailable', async () => {
   const fetchMock = vi.fn().mockResolvedValue({ json: vi.fn().mockResolvedValue({}) });
   vi.stubGlobal('fetch', fetchMock);
 
-  await import('./index');
+  try {
+    await import('./index');
+  } finally {
+    if (localStorageDescriptor) {
+      Object.defineProperty(window, 'localStorage', localStorageDescriptor);
+    } else {
+      delete (window as Window & { localStorage?: Storage }).localStorage;
+    }
+  }
 
   await vi.waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
   const requests = fetchMock.mock.calls.map(([, init]) => JSON.parse(init.body));
