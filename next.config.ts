@@ -228,6 +228,8 @@ export default withNextIntl({
     ignoreBuildErrors: true,
   },
   experimental: {
+    // Keep build workers within the CPU allocation when host CPU counts are visible.
+    cpus: 4,
     useTypeScriptCli: true,
   },
   async headers() {
