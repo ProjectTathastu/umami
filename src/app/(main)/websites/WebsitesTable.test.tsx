@@ -72,11 +72,10 @@ describe('WebsitesTable copy domain', () => {
       expect(link).toHaveAttribute('href', `/websites/${website.id}`);
       const row = link.closest('tr');
       if (!row) throw new Error('Website link must belong to a table row');
-      expect(
-        within(row)
-          .getAllByRole('link')
-          .some(link => link.getAttribute('href')?.startsWith(`/websites/${website.id}/settings`)),
-      ).toBe(true);
+      // LinkButton renders the existing settings anchor with role="button".
+      const settingsAction = within(row).getByRole('button', { name: '' });
+      expect(settingsAction).toBeVisible();
+      expect(settingsAction).toHaveAttribute('href', `/websites/${website.id}/settings`);
     }
   });
 
@@ -137,5 +136,6 @@ describe('WebsitesTable copy domain', () => {
     renderTable(false);
     expect(screen.getAllByRole('button', { name: /^Copy domain:/ })).toHaveLength(2);
     expect(screen.getAllByRole('link')).toHaveLength(2);
+    expect(screen.queryByRole('button', { name: '' })).not.toBeInTheDocument();
   });
 });
