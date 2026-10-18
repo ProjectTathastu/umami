@@ -438,6 +438,7 @@ export const labels: Record<string, string> = {
   lastUsed: 'label.last-used',
   never: 'label.never',
   copy: 'label.copy',
+  copyDomain: 'label.copy-domain',
 };
 
 export const messages: Record<string, string> = {
@@ -522,4 +523,6 @@ export const messages: Record<string, string> = {
   replayMinDurationDescription: 'message.replay-min-duration-description',
   apiKeyCreated: 'message.api-key-created',
   noApiKeys: 'message.no-api-keys',
+  domainCopied: 'message.domain-copied',
+  domainCopyFailed: 'message.domain-copy-failed',
 };

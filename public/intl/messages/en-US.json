@@ -432,6 +432,7 @@
     "last-used": "Last used",
     "never": "Never",
     "copy": "Copy",
+    "copy-domain": "Copy domain",
     "authorize": "Authorize",
     "deny": "Deny"
   },
@@ -521,6 +522,8 @@
     "two-factor-locked-message": "Too many failed attempts. Try again at {time}.",
     "two-factor-active-description": "Your account is protected with two-factor authentication. Each login requires a code from your authenticator app.",
     "api-key-created": "Copy your API key now. You won't be able to see it again.",
-    "no-api-keys": "You have not created any API keys."
+    "no-api-keys": "You have not created any API keys.",
+    "domain-copied": "Copied domain: {domain}",
+    "domain-copy-failed": "Could not copy domain: {domain}. Clipboard access may be unavailable or denied."
   }
 }
