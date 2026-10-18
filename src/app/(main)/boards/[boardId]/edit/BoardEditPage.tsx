@@ -18,18 +18,16 @@ export function BoardEditPage({ boardId }: { boardId: string }) {
   return (
     <PageBody>
       <Column margin="2" width="100%" maxWidth="800px" style={{ marginInline: 'auto' }}>
-        <>
-          <Column marginTop="6">
-            <Link href={renderUrl(`/boards/${boardId}`)}>
-              <IconLabel icon={<ArrowLeft />} label="Board" />
-            </Link>
-          </Column>
-          <PageHeader
-            title={board?.name || t(labels.untitled)}
-            description={board?.description}
-            icon={<LayoutDashboard />}
-          />
-        </>
+        <Column marginTop="6">
+          <Link href={renderUrl(`/boards/${boardId}`)}>
+            <IconLabel icon={<ArrowLeft />} label="Board" />
+          </Link>
+        </Column>
+        <PageHeader
+          title={board?.name || t(labels.untitled)}
+          description={board?.description}
+          icon={<LayoutDashboard />}
+        />
         <Column gap="6">
           <Panel>
             <BoardEditForm boardId={boardId} />
